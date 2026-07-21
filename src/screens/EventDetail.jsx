@@ -6,13 +6,20 @@ import {
   Info,
   MapPin,
   ScanLine,
+  Shield,
   ShieldCheck,
   Ticket as TicketIcon,
   Trash2,
   UserPlus,
   Users,
 } from "lucide-react";
-import { Alert, Badge, Button, Card, EmptyState, Input, Spinner } from "../components/ui";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { Alert } from "../components/ui/alert";
+import { Card } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Spinner } from "../components/ui/spinner";
+import { Empty, EmptyDescription, EmptyTitle } from "../components/ui/empty";
 import { TicketStub } from "../components/TicketStub";
 import { extractEventId ,formatDateTime, initials } from "../lib/utils";
 import { useApi } from "../hooks/useApi";
@@ -360,11 +367,11 @@ export default function EventDetail({ api, event, currentUser, onBack, onDeleted
       {tab === "ticket" && (
         <div className="space-y-4 max-w-md mx-auto">
           {isAdmin ? (
-            <EmptyState
-              icon={ShieldCheck}
-              title="Você é o Organizador Principal"
-              description="Como criador deste evento, você possui credenciais administrativas totais. Não é necessário emitir um ingresso de participação para você."
-            />
+            <Empty>
+              <ShieldCheck />
+              <EmptyTitle>Você é o Organizador Principal</EmptyTitle>
+              <EmptyDescription>Como criador deste evento, você possui credenciais administrativas totais. Não é necessário emitir um ingresso de participação para você.</EmptyDescription>
+            </Empty>
           ) : myTicket ? (
             <TicketStub
               eventName={event.name}
@@ -373,17 +380,15 @@ export default function EventDetail({ api, event, currentUser, onBack, onDeleted
               checkedIn={myTicket.checked_in}
             />
           ) : (
-            <EmptyState
-              icon={TicketIcon}
-              title="Você não tem um bilhete de inscrição"
-              description="Para participar da lista oficial de presença, emita seu convite individual."
-              action={
-                <Button size="sm" onClick={handleGetTicket} disabled={ticketActionLoading}>
+            <Empty>
+              <TicketIcon />
+              <EmptyTitle>Você não tem um bilhete de inscrição</EmptyTitle>
+              <EmptyDescription>Para participar da lista oficial de presença, emita seu convite individual.</EmptyDescription>
+                <Button onClick={handleGetTicket} disabled={ticketActionLoading}>
                   {ticketActionLoading && <Spinner />}
                   Emitir Meu Ingresso Gratuitamente
                 </Button>
-              }
-            />
+            </Empty>
           )}
           {ticketActionError && <Alert tone="error">{ticketActionError}</Alert>}
         </div>
@@ -400,7 +405,7 @@ export default function EventDetail({ api, event, currentUser, onBack, onDeleted
             </div>
           ) : tickets.length === 0 ? (
             <div className="p-4">
-              <EmptyState icon={Users} title="A lista está vazia" description="Nenhum usuário emitiu ingressos para este evento até o momento." />
+              <Empty> <Users /> <EmptyTitle>A lista está vazia</EmptyTitle> <EmptyDescription>Nenhum usuário emitiu ingressos para este evento até o momento.</EmptyDescription></Empty>
             </div>
           ) : (
             <ul className="divide-y divide-border">
@@ -439,17 +444,15 @@ export default function EventDetail({ api, event, currentUser, onBack, onDeleted
       {tab === "team" && isStaffOrAdmin && (
         <div className="space-y-6">
           {!myTicket ? (
-            <EmptyState
-              icon={ShieldCheck}
-              title="Liberação Necessária"
-              description="A verificação estruturada e inserção de novos membros da equipe requer a posse de um convite ativo atrelado à sua conta."
-              action={
+            <Empty>
+              <ShieldCheck />
+              <EmptyTitle>Liberação Necessária</EmptyTitle>
+              <EmptyDescription>A verificação estruturada e inserção de novos membros da equipe requer a posse de um convite ativo atrelado à sua conta.</EmptyDescription>
                 <Button size="sm" onClick={handleGetTicket} disabled={ticketActionLoading}>
                   {ticketActionLoading && <Spinner />}
                   Vincular Meu Acesso Primeiro
                 </Button>
-              }
-            />
+            </Empty>
           ) : (
             <>
               {isAdmin && (

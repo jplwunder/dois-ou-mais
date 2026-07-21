@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { CalendarPlus, Lock, Mail, User as UserIcon } from "lucide-react";
-import { Alert, Button, Card, Input, Label, Spinner } from "../components/ui";
+import { Button } from "../components/ui/button";
+import { Label } from "../components/ui/label";
+import { Alert } from "../components/ui/alert";
+import { Card } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Spinner } from "../components/ui/spinner";
+
 
 // ---------------------------------------------------------------------------
 // Tela de Autenticação (Login / Registro)

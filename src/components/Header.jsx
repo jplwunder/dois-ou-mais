@@ -1,7 +1,7 @@
 import React from "react";
 import { CalendarPlus, LogOut, Moon, Sun } from "lucide-react";
 import { useTheme } from "./theme-provider";
-import { Button } from "./ui";
+import { Button } from "./ui/button";
 import { initials } from "../lib/utils";
 
 // ---------------------------------------------------------------------------

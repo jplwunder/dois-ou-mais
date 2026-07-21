@@ -1,7 +1,6 @@
 // ---------------------------------------------------------------------------
 // Funções utilitárias compartilhadas
 // ---------------------------------------------------------------------------
-
 export function extractEventId(input) {
   const trimmed = input.trim();
   const match = trimmed.match(

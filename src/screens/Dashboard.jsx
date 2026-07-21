@@ -1,6 +1,15 @@
 import React, { useState } from "react";
 import { Calendar, Link2, MapPin, Plus, Search } from "lucide-react";
-import { Alert, Badge, Button, Card, EmptyState, Input, Label, Modal, Spinner, Textarea } from "../components/ui";
+import { Modal } from "../components/ui/modal";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Label } from "../components/ui/label";
+import { Alert } from "../components/ui/alert";
+import { Card } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Spinner } from "../components/ui/spinner";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle, EmptyMedia } from "../components/ui/empty";
+import { Textarea } from "../components/ui/textarea";
 import { extractEventId, formatDateTime } from "../lib/utils";
 
 // ---------------------------------------------------------------------------
@@ -122,16 +131,18 @@ export default function Dashboard({ api, events, eventsLoading, eventsError, onR
           <Spinner className="h-7 w-7 text-muted-foreground" />
         </div>
       ) : events.length === 0 ? (
-        <EmptyState
-          icon={Calendar}
-          title="Nenhum evento registrado"
-          description="Você ainda não faz parte da organização de nenhum evento no momento."
-          action={
-            <Button size="sm" onClick={() => setShowCreate(true)}>
-              <Plus className="h-4 w-4" /> Criar Primeiro Evento
-            </Button>
-          }
-        />
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <Calendar />
+            </EmptyMedia>
+          <EmptyTitle>Nenhum evento registrado</EmptyTitle>
+          <EmptyDescription>Você ainda não faz parte da organização de nenhum evento no momento.</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button onClick={() => setShowCreate(true)}>Criar Primeiro Evento</Button>
+          </EmptyContent>
+        </Empty>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {events.map((ev) => (

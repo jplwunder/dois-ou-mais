@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Check, CheckCircle2, Copy, Ticket as TicketIcon } from "lucide-react";
-import { Badge } from "./ui";
+import { Badge } from "../components/ui/badge";
 
 export function TicketStub({ eventName, holderName, code, checkedIn }) {
   const [copied, setCopied] = useState(false);

@@ -19,7 +19,7 @@ export default function AuthScreen({ api, onAuthenticated }) {
   const [notice, setNotice] = useState("");
 
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
-  const [registerForm, setRegisterForm] = useState({ name: "", email: "", password: "", age: "" });
+  const [registerForm, setRegisterForm] = useState({ name: "", email: "", password: ""});
 
   async function handleLogin() {
     setLoading(true);
@@ -48,11 +48,10 @@ export default function AuthScreen({ api, onAuthenticated }) {
         email: registerForm.email,
         password: registerForm.password,
       };
-      if (registerForm.age) payload.age = Number(registerForm.age);
       await api("/users", { method: "POST", body: payload });
       setNotice("Conta criada com sucesso! Faça login abaixo.");
       setLoginForm({ email: registerForm.email, password: "" });
-      setRegisterForm({ name: "", email: "", password: "", age: "" });
+      setRegisterForm({ name: "", email: "", password: ""});
       setMode("login");
     } catch (e) {
       setError(e.message);
@@ -155,20 +154,6 @@ export default function AuthScreen({ api, onAuthenticated }) {
                 />
               </div>
             </div>
-
-            {mode === "register" && (
-              <div>
-                <Label htmlFor="age">Idade (opcional)</Label>
-                <Input
-                  id="age"
-                  type="number"
-                  min="0"
-                  placeholder="Ex: 25"
-                  value={registerForm.age}
-                  onChange={(e) => setRegisterForm({ ...registerForm, age: e.target.value })}
-                />
-              </div>
-            )}
 
             {error && <Alert tone="error">{error}</Alert>}
             {notice && <Alert tone="success">{notice}</Alert>}

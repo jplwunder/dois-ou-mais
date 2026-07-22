@@ -16,6 +16,7 @@ import { Header } from "./components/Header";
 import AuthScreen from "./screens/AuthScreen";
 import Dashboard from "./screens/Dashboard";
 import EventDetail from "./screens/EventDetail";
+import PublicEventSubscription from "./screens/PublicEventSubscription";
 
 import axiosInstance from "./lib/api";
 import apiRequest from "./lib/apiRequest"
@@ -25,6 +26,10 @@ import apiRequest from "./lib/apiRequest"
 // ---------------------------------------------------------------------------
 export default function App() {
   // Authentication state
+  const path = window.location.pathname;
+  const uuidRegex = /^\/evento\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$/;
+  const match = window.location.pathname.match(uuidRegex);
+  const publicEventId = match ? match[1] : null;
   const { token, currentUser, login, logout } = useAuth();
 
   // Navigation state
@@ -46,6 +51,9 @@ export default function App() {
 
   function handleAuthenticated(newToken, user) {
     login(newToken, user);
+    if (window.location.pathname !== "/") {
+      window.history.pushState({}, "", "/");
+    }
   }
 
   function handleLogout() {
@@ -66,7 +74,9 @@ export default function App() {
   // Route rendering
   return (
     <div className="min-h-screen bg-background font-sans text-foreground transition-colors duration-200">
-      {!token || !currentUser ? (
+      {publicEventId && (!token || !currentUser) ? (
+        <PublicEventSubscription api={api} onFinished={handleAuthenticated} eventId={publicEventId} />
+      ) : !token || !currentUser ? (
         <AuthScreen api={api} onAuthenticated={handleAuthenticated} />
       ) : (
         <>

@@ -34,7 +34,6 @@ import { useEvents } from "../hooks/useEvents";
 export default function EventDetail({ api, event, currentUser, onBack, onDeleted }) {
   const isAdmin = event.role === "admin";
   const isStaffOrAdmin = event.role === "admin" || event.role === "staff";
-
   const [tab, setTab] = useState("overview");
 
   const [tickets, setTickets] = useState([]);
@@ -64,6 +63,20 @@ export default function EventDetail({ api, event, currentUser, onBack, onDeleted
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const roleConfig = {
+  admin: {
+    tone: "admin",
+    label: "Administrador",
+    },
+  staff: {
+    tone: "staff",
+    label: "Equipe",
+    },
+  attendee: {
+    tone: "attendee",
+    label: "Participante",
+    },
+  };
 
   const loadTickets = useCallback(async () => {
     setTicketsLoading(true);
@@ -269,11 +282,9 @@ export default function EventDetail({ api, event, currentUser, onBack, onDeleted
         <div>
           <div className="mb-1.5 flex flex-wrap items-center gap-2">
             <h1 className="text-2xl font-bold text-foreground">{event.name}</h1>
-            {event.role && (
-              <Badge tone={isAdmin ? "admin" : "staff"}>
-                {isAdmin ? "Dono / Admin" : "Membro Staff"}
+              <Badge tone={roleConfig[event.role].tone}>
+                {roleConfig[event.role].label}
               </Badge>
-            )}
           </div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
             <span className="flex items-center gap-1.5">
@@ -336,22 +347,26 @@ export default function EventDetail({ api, event, currentUser, onBack, onDeleted
 
       {tab === "overview" && (
         <Card className="p-5">
-          <h3 className="mb-4 font-semibold text-sm uppercase tracking-wider text-muted-foreground">Métricas e Detalhes</h3>
+          { isStaffOrAdmin && (
+            <h3 className="mb-4 font-semibold text-sm uppercase tracking-wider text-muted-foreground">Métricas e Detalhes</h3>
+          ) }
+          { !isStaffOrAdmin && (
+            <p className="text-sm text-muted-foreground">
+              <h3 className="mb-4 font-semibold text-sm uppercase tracking-wider text-muted-foreground">Detalhes</h3>
+            </p>
+          )}
           <dl className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
-            <div className="border-l-2 border-primary pl-3">
-              <dt className="text-xs text-muted-foreground font-medium">Inscritos Totais</dt>
-              <dd className="mt-0.5 text-xl font-bold text-foreground">{tickets.length}</dd>
-            </div>
-            <div className="border-l-2 border-emerald-500 pl-3">
-              <dt className="text-xs text-muted-foreground font-medium">Presenças (Check-in)</dt>
-              <dd className="mt-0.5 text-xl font-bold text-foreground">
-                {tickets.filter((t) => t.checked_in).length}
-              </dd>
-            </div>
+            { isStaffOrAdmin && (
+              <div className="border-l-2 border-primary pl-3">
+                <dt className="text-xs text-muted-foreground font-medium">Inscritos Totais</dt>
+                <dd className="mt-0.5 text-xl font-bold text-foreground">{tickets.length}</dd>
+              </div>
+              
+            )}
             <div className="col-span-2 border-l-2 border-neutral-300 dark:border-neutral-700 pl-3 sm:col-span-1">
               <dt className="text-xs text-muted-foreground font-medium">ID do Evento</dt>
               <dd className="mt-1 break-all font-mono text-[11px] text-foreground font-semibold bg-muted p-1 rounded">
-                {event.id}
+                localhost:5173/evento/{event.id}
               </dd>
             </div>
           </dl>

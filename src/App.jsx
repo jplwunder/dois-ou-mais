@@ -27,8 +27,8 @@ import apiRequest from "./lib/apiRequest"
 export default function App() {
   // Authentication state
   const path = window.location.pathname;
-  const uuidRegex = /^\/evento\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$/;
-  const match = window.location.pathname.match(uuidRegex);
+  const match = window.location.pathname.match(/^\/evento\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$/);
+  const matchConfirm = window.location.pathname.match(/^\/confirm$/);
   const publicEventId = match ? match[1] : null;
   const { token, currentUser, login, logout } = useAuth();
 
@@ -81,6 +81,11 @@ export default function App() {
       ) : (
         <>
           <Header user={currentUser} onLogout={handleLogout} onLogoClick={handleBackToDashboard} />
+          {matchConfirm && (
+            <Alert tone="success" className="m-4">
+              Email confirmado com sucesso! Você já pode entrar no sistema.
+            </Alert>
+          )}
           <main className="animate-in fade-in duration-300">
             {view === "dashboard" && (
               <Dashboard

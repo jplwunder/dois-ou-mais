@@ -49,7 +49,7 @@ export default function AuthScreen({ api, onAuthenticated }) {
         password: registerForm.password,
       };
       await api("/users", { method: "POST", body: payload });
-      setNotice("Conta criada com sucesso! Faça login abaixo.");
+      setNotice("Conta criada com sucesso! Faça seu login agora.");
       setLoginForm({ email: registerForm.email, password: "" });
       setRegisterForm({ name: "", email: "", password: ""});
       setMode("login");

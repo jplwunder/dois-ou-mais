@@ -51,9 +51,14 @@ export default function PublicEventSubscription({ api, onFinished, eventId }) {
         email: form.email,
         password: form.password,
       };
+      try {
       await api("/users", { method: "POST", body: userPayload });
+    } catch (e) {
+      if (e.status === 400 && e.message.includes("already exists")) {
+        throw e;
+      }
+    }
 
-      
         // 2. Realiza o login imediato para obter o token provisório
         const tokenData = await api("/login", {
           form: true,
@@ -68,12 +73,18 @@ export default function PublicEventSubscription({ api, onFinished, eventId }) {
         body: { username: form.email, password: form.password },
       });
 
+    try {
       // 3. Inscreve o usuário recém-criado no evento usando o token gerado
       await api(`/attendees/tickets?event_id=${encodeURIComponent(eventId)}`, { 
         method: "POST",
         token: tokenData.access_token 
       });
-
+    } catch (e) {
+      if (!(e.status === 400 && e.message.includes("already has"))) {
+        // Se o usuário já estiver inscrito, apenas ignore o erro
+        throw e;
+      }
+    }
       setSuccess(true);
       
       // Pequeno delay para o usuário ler a mensagem antes de ir para a Dashboard

@@ -4,9 +4,10 @@
 import axiosInstance from "./api";
 
 export default async function apiRequest(path, { method = "GET", token, body, form } = {}) {
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
   const config = {
     method,
-    url: path,
+    url: new URL(path, axiosInstance.defaults.baseURL).href,
     headers: {},
   };
 
@@ -15,14 +16,20 @@ export default async function apiRequest(path, { method = "GET", token, body, fo
   }
 
   if (form) {
-    config.data = new URLSearchParams(body).toString();
-    config.headers["Content-Type"] = "application/x-www-form-urlencoded";
+    if (body instanceof FormData) {
+      config.data = body;
+      // O axios detecta automaticamente o tipo de conteúdo para FormData
+    } else {
+      config.data = new URLSearchParams(body).toString();
+      config.headers["Content-Type"] = "application/x-www-form-urlencoded";
+    }
   } else if (body !== undefined) {
     config.data = body;
     config.headers["Content-Type"] = "application/json";
   }
 
   try {
+    console.log("✈️ DISPARANDO REQUISIÇÃO PARA:", new URL(path, axiosInstance.defaults.baseURL).href);
     const response = await axiosInstance(config);
     return response.data;
   } catch (error) {

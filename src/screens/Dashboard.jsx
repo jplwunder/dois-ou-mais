@@ -90,7 +90,7 @@ export default function Dashboard({ api, events, eventsLoading, eventsError, onR
           </p>
         </div>
         <Button onClick={() => setShowCreate(true)}>
-          <Plus className="h-4 w-4" /> Novo Evento
+          <Plus className="h-4 w-4" /> Quer criar o seu Evento?
         </Button>
       </div>
 
@@ -140,7 +140,7 @@ export default function Dashboard({ api, events, eventsLoading, eventsError, onR
           <EmptyDescription>Você ainda não faz parte da organização de nenhum evento no momento.</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Button onClick={() => setShowCreate(true)}>Criar Primeiro Evento</Button>
+            <Button onClick={() => setShowCreate(true)}>Crie o seu próprio evento</Button>
           </EmptyContent>
         </Empty>
       ) : (

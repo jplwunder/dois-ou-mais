@@ -94,32 +94,6 @@ export default function Dashboard({ api, events, eventsLoading, eventsError, onR
         </Button>
       </div>
 
-      <Card className="mb-8 p-5 bg-card border-border">
-        <p className="mb-1 flex items-center gap-2 text-sm font-semibold text-foreground">
-          <Link2 className="h-4 w-4 text-primary" /> Acessar Evento por ID
-        </p>
-        <p className="mb-4 text-xs text-muted-foreground">
-          Caso possua o identificador UUID único de um evento externo, busque-o diretamente aqui.
-        </p>
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <Input
-            placeholder="Cole o ID do evento (ex: 8b4a2e...)"
-            value={joinValue}
-            onChange={(e) => setJoinValue(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && joinValue && handleJoin()}
-          />
-          <Button variant="outline" onClick={handleJoin} disabled={!joinValue || joinLoading}>
-            {joinLoading ? <Spinner /> : <Search className="h-4 w-4" />}
-            Buscar
-          </Button>
-        </div>
-        {joinError && (
-          <div className="mt-3">
-            <Alert tone="error">{joinError}</Alert>
-          </div>
-        )}
-      </Card>
-
       {eventsError && (
         <div className="mb-4">
           <Alert tone="error">{eventsError}</Alert>

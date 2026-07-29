@@ -366,7 +366,9 @@ export default function EventDetail({ api, event, currentUser, onBack, onDeleted
             <div className="col-span-2 border-l-2 border-neutral-300 dark:border-neutral-700 pl-3 sm:col-span-1">
               <dt className="text-xs text-muted-foreground font-medium">ID do Evento</dt>
               <dd className="mt-1 break-all font-mono text-[11px] text-foreground font-semibold bg-muted p-1 rounded">
-                localhost:5173/evento/{event.id}
+                <a href={`localhost:5173/evento/${event.id}`} target="_blank" rel="noopener noreferrer">
+                  localhost:5173/evento/{event.id}
+                </a>
               </dd>
             </div>
           </dl>

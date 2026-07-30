@@ -245,7 +245,7 @@ export default function EventDetail({ api, event, currentUser, onBack, onDeleted
     setDeleteError("");
     try {
       await api(`/events/${event.id}?ticket_code=${encodeURIComponent(myTicket.ticket_code)}`, {
-        method: "DELETE",
+        method: "POST",
       });
       onDeleted(event.id);
     } catch (e) {

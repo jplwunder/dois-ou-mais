@@ -35,7 +35,14 @@ export default function AuthScreen({ api, onAuthenticated }) {
       const me = await api("auth/me", { token: tokenData.access_token });
       onAuthenticated(tokenData.access_token, me);
     } catch (e) {
-      setError(e.message);
+      const errorMessage = e.message || "Falha ao autenticar. Verifique suas credenciais.";
+      if (errorMessage.includes("não verificada")) {
+        setVerificationEmail(loginForm.email);
+        setMode("verify");
+      } else {
+        setError(errorMessage);
+        console.log("Login error:", errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -54,6 +61,7 @@ export default function AuthScreen({ api, onAuthenticated }) {
       setVerificationEmail(registerForm.email);
       setLoginForm({ email: registerForm.email, password: "" });
       setRegisterForm({ name: "", email: "", password: ""});
+      setVerificationEmail(registerForm.email);
       setMode("verify");
     } catch (e) {
       setError(e.message);
@@ -66,13 +74,6 @@ export default function AuthScreen({ api, onAuthenticated }) {
     setNotice("");
     if (mode === "login") handleLogin();
     else handleRegister();
-  }
-
-  async function handleDeleteOldVerificationCodes() {
-
-    api("/auth/delete-verification-code", {
-      method: "DELETE"
-    });
   }
 
   if (mode === "verify") {

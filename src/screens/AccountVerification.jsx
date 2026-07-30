@@ -110,7 +110,6 @@ export default function AccountVerification({ email, api, onVerified, onBackToLo
     } catch (err) {
       setError(err.message || "Código inválido ou expirado. Tente novamente.");
       // Limpa os campos para nova tentativa
-      await handleDeleteOldVerificationCodes();
       setCode(Array(CODE_LENGTH).fill(""));
       inputRefs.current[0]?.focus();
     } finally {

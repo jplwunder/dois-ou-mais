@@ -6,6 +6,7 @@ import { Alert } from "../components/ui/alert";
 import { Card } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Spinner } from "../components/ui/spinner";
+import AccountVerification from "./AccountVerification";
 
 
 // ---------------------------------------------------------------------------
@@ -14,6 +15,7 @@ import { Spinner } from "../components/ui/spinner";
 
 export default function AuthScreen({ api, onAuthenticated }) {
   const [mode, setMode] = useState("login");
+  const [verificationEmail, setVerificationEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -25,12 +27,12 @@ export default function AuthScreen({ api, onAuthenticated }) {
     setLoading(true);
     setError("");
     try {
-      const tokenData = await api("/login", {
+      const tokenData = await api("auth/login", {
         form: true,
         method: "POST",
         body: { username: loginForm.email, password: loginForm.password },
       });
-      const me = await api("/me", { token: tokenData.access_token });
+      const me = await api("auth/me", { token: tokenData.access_token });
       onAuthenticated(tokenData.access_token, me);
     } catch (e) {
       setError(e.message);
@@ -49,10 +51,10 @@ export default function AuthScreen({ api, onAuthenticated }) {
         password: registerForm.password,
       };
       await api("/users", { method: "POST", body: payload });
-      setNotice("Conta criada com sucesso! Faça seu login agora.");
+      setVerificationEmail(registerForm.email);
       setLoginForm({ email: registerForm.email, password: "" });
       setRegisterForm({ name: "", email: "", password: ""});
-      setMode("login");
+      setMode("verify");
     } catch (e) {
       setError(e.message);
     } finally {
@@ -64,6 +66,26 @@ export default function AuthScreen({ api, onAuthenticated }) {
     setNotice("");
     if (mode === "login") handleLogin();
     else handleRegister();
+  }
+
+  async function handleDeleteOldVerificationCodes() {
+
+    api("/auth/delete-verification-code", {
+      method: "DELETE"
+    });
+  }
+
+  if (mode === "verify") {
+    return (
+      <AccountVerification
+        api={api}
+        email={verificationEmail}
+        onVerified={() => {
+          setNotice("Conta verificada com sucesso! Faça login para continuar.");
+          setMode("login");
+        }}
+      />
+    );
   }
 
   return (

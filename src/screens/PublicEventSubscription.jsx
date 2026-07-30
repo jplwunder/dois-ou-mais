@@ -66,13 +66,6 @@ export default function PublicEventSubscription({ api, onFinished, eventId }) {
           body: { username: form.email, password: form.password },
         });
       }
-      // 2. Realiza o login imediato para obter o token provisório
-      const tokenData = await api("/login", {
-        form: true,
-        method: "POST",
-        body: { username: form.email, password: form.password },
-      });
-
     try {
       // 3. Inscreve o usuário recém-criado no evento usando o token gerado
       await api(`/attendees/tickets?event_id=${encodeURIComponent(eventId)}`, { 

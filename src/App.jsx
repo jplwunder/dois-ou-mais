@@ -74,32 +74,6 @@ export default function App() {
     refreshEvents();
   }
 
-  function handleConfirmEmail(token_email) {
-
-    api(`/verify?token=${token_email}`, { method: "GET" })
-      .then((data) => {
-        setEmailConfirmed(true);
-        setTimeout(() => setEmailConfirmed(false), 50000);
-      })
-      .catch((e) => {
-        // Usa o e.message que o seu utilitário apiRequest já extrai do FastAPI!
-        console.error("Erro ao confirmar email:", e.message);
-        setEmailError(e.message || "Não foi possível confirmar o email. O link pode ter expirado ou já ter sido usado.");
-      });
-  }
-
-  useEffect(() => {
-    // Busque o token diretamente dentro do useEffect no momento em que o componente monta
-    const urlParams = new URLSearchParams(window.location.search);
-    const tokenDaUrl = urlParams.get('token'); // certifique-se de que o nome na URL é 'token'
-
-    // Só dispara se o token realmente existir na URL do navegador
-    if (tokenDaUrl) {
-      handleConfirmEmail(tokenDaUrl);
-    }
-  }, []); // Array de dependências VAZIO para rodar estritamente UMA VEZ na montagem
-
-
   // Route rendering
   return (
     <div className="min-h-screen bg-background font-sans text-foreground transition-colors duration-200">

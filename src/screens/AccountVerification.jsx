@@ -94,7 +94,7 @@ export default function AccountVerification({ email, api, onVerified, onBackToLo
 
     try {
       // Ajuste o endpoint conforme a especificação da sua API
-      await api(`/auth/verify-code`, {
+      await api(`auth/verify-code`, {
         method: "POST",
         body: {
           email: email,

@@ -7,17 +7,20 @@ import { Spinner } from "../components/ui/spinner";
 import { Alert } from "../components/ui/alert";
 import { CalendarPlus, Calendar, MapPin, UserIcon, Mail, Lock, CheckCircle2, Loader2 } from "lucide-react";
 import { formatDateTime } from "../lib/utils";
+import AccountVerification from "./AccountVerification";
 
 // ---------------------------------------------------------------------------
 // Sub-telas: Inscrição Pública de Evento (Acessível sem Login)
 // ---------------------------------------------------------------------------
 export default function PublicEventSubscription({ api, onFinished, eventId }) {
+  const [mode, setMode] = useState("login");
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [event, setEvent] = useState(null);
+  const [notice, setNotice] = useState("");
   // Carrega os detalhes públicos do evento ao montar a tela
   useEffect(() => {
     async function fetchPublicEvent() {
@@ -36,62 +39,75 @@ export default function PublicEventSubscription({ api, onFinished, eventId }) {
   }, [eventId, api]);
 
   async function handleRegisterAndSubscribe() {
-    if (!form.name || !form.email || !form.password) {
-      setError("Por favor, preencha todos os campos obrigatórios.");
-      return;
-    }
+  if (!form.name || !form.email || !form.password) {
+    setLoading(true);
+    setError("Por favor, preencha todos os campos obrigatórios.");
+    return;
+  }
 
-    setSubmitting(true);
-    setError("");
-    try {
-        if (event) {
-      // 1. Cria a conta do Usuário (Inicia desativada/pendente de verificação)
-      const userPayload = {
-        name: form.name,
-        email: form.email,
-        password: form.password,
-      };
-      try {
-      await api("/users", { method: "POST", body: userPayload });
-    } catch (e) {
-      if (e.status === 400 && e.message.includes("already exists")) {
-        throw e;
-      }
-    }
+  setSubmitting(true);
+  setError("");
 
-        // 2. Realiza o login imediato para obter o token provisório
-        const tokenData = await api("/login", {
-          form: true,
-          method: "POST",
-          body: { username: form.email, password: form.password },
-        });
-      }
+  try {
+    let tokenData;
+
+    // Tenta criar a conta
     try {
-      // 3. Inscreve o usuário recém-criado no evento usando o token gerado
-      await api(`/attendees/tickets?event_id=${encodeURIComponent(eventId)}`, { 
+      await api("/users", {
         method: "POST",
-        token: tokenData.access_token 
+        body: {
+          name: form.name,
+          email: form.email,
+          password: form.password,
+        },
       });
     } catch (e) {
-      if (!(e.status === 400 && e.message.includes("already has"))) {
-        // Se o usuário já estiver inscrito, apenas ignore o erro
+      // Se o usuário já existe, continua normalmente.
+      // Caso contrário, lança o erro.
+      if (
+        e.status !== 409 &&
+        !e.message?.toLowerCase().includes("already registered")
+      ) {
         throw e;
       }
     }
-      setSuccess(true);
-      
-      // Pequeno delay para o usuário ler a mensagem antes de ir para a Dashboard
-      setTimeout(async () => {
-        const me = await api("/me", { token: tokenData.access_token });
-        onFinished(tokenData.access_token, me);
-      }, 3500);
 
-    } catch (e) {
-      setError(e.message || "Ocorreu um erro ao processar sua inscrição.");
-    } finally {
-      setSubmitting(false);
-    }
+    // Faz login (funciona tanto para conta recém-criada quanto existente)
+    tokenData = await api("auth/login", {
+      form: true,
+      method: "POST",
+      body: {
+        username: form.email,
+        password: form.password,
+      },
+    });
+
+    // Inscreve no evento
+    await api(
+      `/attendees/tickets?event_id=${encodeURIComponent(eventId)}`,
+      {
+        method: "POST",
+        token: tokenData.access_token,
+      }
+    );
+
+    setSuccess(true);
+
+    setTimeout(async () => {
+      const me = await api("auth/me", {
+        token: tokenData.access_token,
+      });
+
+      onFinished(tokenData.access_token, me);
+    }, 3500);
+
+  } catch (e) {
+    setError(e.message || "Ocorreu um erro ao processar sua inscrição.");
+  } finally {
+    setSubmitting(false);
+    setLoading(false);
   }
+}
 
   if (loading) {
     return (
@@ -103,6 +119,8 @@ export default function PublicEventSubscription({ api, onFinished, eventId }) {
       </div>
     );
   }
+  
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
@@ -114,7 +132,18 @@ export default function PublicEventSubscription({ api, onFinished, eventId }) {
           <span className="text-xs font-bold uppercase tracking-wider text-primary">Inscrição de Evento</span>
         </div>
 
-        {error && <div className="mb-4"><Alert tone="error">{error}</Alert></div>}
+        {error.includes("not verified") && (
+          <div className="mb-4">
+            <AccountVerification
+              api={api}
+              email={form.email}
+              onVerified={() => {
+                setNotice("Conta verificada com sucesso! Faça login para continuar.");
+                setMode("login");
+              }}
+            />
+          </div>
+        )}
 
         {success ? (
           <Card className="p-6 text-center shadow-md border-emerald-500/30 bg-emerald-500/5">

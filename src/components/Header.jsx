@@ -1,7 +1,10 @@
 import React from "react";
 import { CalendarPlus, LogOut, Moon, Sun } from "lucide-react";
 import { useTheme } from "./theme-provider";
+import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { Button } from "./ui/button";
+import { Card, CardContent } from "./ui/card";
+import { Label } from "./ui/label";
 import { initials } from "../lib/utils";
 
 // ---------------------------------------------------------------------------
@@ -30,12 +33,11 @@ export function Header({ user, onLogout, onLogoClick }) {
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
 
-          <div className="mx-1 hidden items-center gap-2 rounded-full border border-border py-1 pl-1 pr-3 sm:flex bg-muted/30">
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-              {initials(user.name)}
-            </div>
-            <span className="text-xs font-medium text-foreground max-w-[120px] truncate">{user.name}</span>
-          </div>
+            <Avatar>
+              <AvatarImage src={user.avatarUrl} alt={initials(user.name)} />
+              <AvatarFallback>{initials(user.name)}</AvatarFallback>
+            </Avatar>
+            <Label>{user.name}</Label>
 
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-9 w-9" onClick={onLogout} aria-label="Desconectar">
             <LogOut className="h-4 w-4" />

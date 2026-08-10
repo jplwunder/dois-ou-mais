@@ -29,7 +29,6 @@ export default async function apiRequest(path, { method = "GET", token, body, fo
   }
 
   try {
-    console.log("✈️ DISPARANDO REQUISIÇÃO PARA:", new URL(path, axiosInstance.defaults.baseURL).href);
     const response = await axiosInstance(config);
     return response.data;
   } catch (error) {

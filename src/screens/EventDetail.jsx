@@ -329,19 +329,20 @@ export default function EventDetail({ api, event, currentUser, onBack, onDeleted
         </Card>
       )}
 
-      <div className="mb-6 flex gap-1 overflow-x-auto rounded-lg bg-muted p-1 border border-border/30">
+      <div className="mb-6 flex gap-1 overflow-x-auto bg-muted p-1 border border-border/30">
         {tabList.map((t) => (
-          <button
+          <Button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-2 text-xs font-semibold transition-all cursor-pointer ${
+            variant="ghost"
+            className={`${
               tab === t.id
                 ? "bg-background text-foreground shadow-xs"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
             <t.icon className="h-3.5 w-3.5" /> {t.label}
-          </button>
+          </Button>
         ))}
       </div>
 

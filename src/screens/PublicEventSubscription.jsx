@@ -194,10 +194,10 @@ export default function PublicEventSubscription({ api, onFinished, eventId }) {
     <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
       <div className="w-full max-w-md">
         <div className="mb-6 text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center bg-primary rounded-2xl">
             <CalendarPlus className="h-6 w-6" />
           </div>
-          <span className="text-xs font-bold uppercase tracking-wider text-primary">Inscrição de Evento</span>
+          <span className="text-xs font-bold uppercase tracking-wider">Inscrição de Evento</span>
         </div>
 
         <Card className="p-6 shadow-md bg-card">
@@ -209,9 +209,9 @@ export default function PublicEventSubscription({ api, onFinished, eventId }) {
                 <p className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> {event.location}</p>
               </div>
               {event.description && (
-                <p className="mt-3 text-xs text-muted-foreground/90 bg-muted/40 p-2.5 rounded-lg line-clamp-3">
+                <Card className="mt-2 bg-muted/40 p-2.5">
                   {event.description}
-                </p>
+                </Card>
               )}
             </div>
           )}

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Card } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Alert } from "../components/ui/alert";
+import { Input } from "../components/ui/input";
 import { ShieldCheck, ArrowLeft, Loader2, CheckCircle2 } from "lucide-react";
 
 export default function AccountVerification({ email, api, onVerified, onBackToLogin }) {
@@ -168,7 +169,7 @@ export default function AccountVerification({ email, api, onVerified, onBackToLo
             {/* Inputs de Código */}
             <div className="flex justify-between gap-2 mb-6" onPaste={handlePaste}>
               {code.map((digit, index) => (
-                <input
+                <Input
                   key={index}
                   ref={(el) => (inputRefs.current[index] = el)}
                   type="text"
@@ -178,14 +179,14 @@ export default function AccountVerification({ email, api, onVerified, onBackToLo
                   onChange={(e) => handleChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
                   disabled={loading}
-                  className="h-12 w-12 rounded-lg border border-input bg-background text-center text-lg font-bold text-foreground transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50"
+                  className="h-12 w-12 bg-background text-center focus:border-primary focus:outline-none focus:ring-2"
                 />
               ))}
             </div>
 
             {/* Botão de Confirmação Manual */}
             <Button
-              className="w-full flex items-center justify-center gap-2"
+              
               onClick={() => verifyCode(code.join(""))}
               disabled={loading || code.join("").length !== CODE_LENGTH}
             >
@@ -196,10 +197,11 @@ export default function AccountVerification({ email, api, onVerified, onBackToLo
             {/* Reenvio do Código */}
             <div className="mt-6 text-center text-xs text-muted-foreground">
               Não recebeu o código?{" "}
-              <button
+              <Button
                 type="button"
                 onClick={handleResendCode}
                 disabled={resendCooldown > 0 || resending}
+                variant="link"
                 className="font-semibold text-primary underline-offset-4 hover:underline disabled:opacity-50 disabled:no-underline"
               >
                 {resendCooldown > 0
@@ -207,19 +209,19 @@ export default function AccountVerification({ email, api, onVerified, onBackToLo
                   : resending
                   ? "Enviando..."
                   : "Reenviar código"}
-              </button>
+              </Button>
             </div>
 
             {/* Opção para voltar/trocar conta */}
             {onBackToLogin && (
               <div className="mt-4 pt-4 border-t border-border/60 text-center">
-                <button
+                <Button
                   type="button"
                   onClick={onBackToLogin}
                   className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" /> Voltar para o Login
-                </button>
+                </Button>
               </div>
             )}
           </Card>

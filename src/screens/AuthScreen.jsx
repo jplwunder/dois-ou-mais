@@ -103,23 +103,25 @@ export default function AuthScreen({ api, onAuthenticated }) {
         </div>
 
         <Card className="p-6 shadow-md bg-card">
-          <div className="mb-5 grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
-            <button
+          <div className="mb-5 grid grid-cols-2 gap-1 bg-muted p-1">
+            <Button
               onClick={() => { setMode("login"); setError(""); }}
-              className={`rounded-md py-1.5 text-sm font-medium transition-colors cursor-pointer ${
+              variant="outline"
+              className={` ${
                 mode === "login" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
               }`}
             >
               Entrar
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => { setMode("register"); setError(""); }}
-              className={`rounded-md py-1.5 text-sm font-medium transition-colors cursor-pointer ${
+              variant="outline"
+              className={`${
                 mode === "register" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
               }`}
             >
               Cadastrar
-            </button>
+            </Button>
           </div>
 
           <div className="space-y-4">

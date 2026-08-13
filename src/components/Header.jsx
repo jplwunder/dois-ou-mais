@@ -17,21 +17,21 @@ export function Header({ user, onLogout, onLogoClick }) {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
-        <button onClick={onLogoClick} className="flex items-center gap-2 group text-left cursor-pointer">
+        <Button variant="ghost" onClick={onLogoClick} className="flex items-center gap-2 group text-left cursor-pointer">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs transition-transform group-hover:scale-105">
             <CalendarPlus className="h-4 w-4" />
           </div>
           <span className="font-bold text-foreground tracking-tight text-sm sm:text-base">EventosHub</span>
-        </button>
+        </Button>
 
         <div className="flex items-center gap-2">
-          <button
+          <Button
             onClick={() => setTheme(isDark ? "light" : "dark")}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-foreground cursor-pointer"
+            variant="ghost"
             aria-label="Trocar cor tema"
           >
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </button>
+          </Button>
 
             <Avatar>
               <AvatarImage src={user.avatarUrl} alt={initials(user.name)} />

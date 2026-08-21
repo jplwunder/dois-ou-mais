@@ -51,33 +51,34 @@ export default function Dashboard({ api, events, eventsLoading, eventsError, onR
   const month = String(dateObj.getMonth() + 1).padStart(2, "0");
   const day = String(dateObj.getDate()).padStart(2, "0");
 
-  const [hours = "00", minutes = "00", seconds = "00"] = (timeStr || "00:00:00")
+  const [hours = "00", minutes = "00"] = (timeStr || "00:00")
     .split(":")
     .map((v) => String(v).padStart(2, "0"));
 
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.000000`;
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
   }
 
   async function handleCreate() {
     setCreating(true);
     setCreateError("");
     try {
-      if (!form.name || !form.date || !form.location) {
-        throw new Error("Por favor, informe no mínimo o nome, a data e o local.");
+      if (!form.name || !form.date || !form.time || !form.location) {
+        throw new Error("Por favor, informe no mínimo o nome, a data, o horário e o local.");
       }
 
       const selectedDate = new Date(form.date);
       const [hours, minutes] = form.time.split(":").map(Number);
+      selectedDate.setHours(hours, minutes, 0, 0);
 
       const payload = {
         name: form.name,
-        date: new Date(form.date).toISOString(),
+        date: formatCustomDateTime(selectedDate, form.time),
         location: form.location,
         description: form.description || null,
       };
       await api("/events/", { method: "POST", body: payload });
       setShowCreate(false);
-      setForm({ name: "", date: "", location: "", description: "" });
+      setForm({ name: "", date: "", time: "", location: "", description: "" });
       onRefresh();
     } catch (e) {
       setCreateError(e.message);
@@ -217,7 +218,7 @@ export default function Dashboard({ api, events, eventsLoading, eventsError, onR
               <Input
                 type="time"
                 id="ev-time"
-                step="1"
+                step="60"
                 value={form.time}
                 onChange={(e) => setForm((prev) => ({ ...prev, time: e.target.value }))}
                 className="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"

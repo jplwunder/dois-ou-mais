@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { TrendingUp } from "lucide-react"
+import { Pie, PieChart } from "recharts"
 import {
   ArrowLeft,
   Calendar,
@@ -16,9 +18,15 @@ import {
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Alert } from "../components/ui/alert";
-import { Card } from "../components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Spinner } from "../components/ui/spinner";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  useChart,
+} from "../components/ui/chart";
 import { Empty, EmptyDescription, EmptyTitle } from "../components/ui/empty";
 import { TicketStub } from "../components/TicketStub";
 import { extractEventId ,formatDateTime, initials } from "../lib/utils";
@@ -77,6 +85,33 @@ export default function EventDetail({ api, event, currentUser, onBack, onDeleted
     label: "Participante",
     },
   };
+
+  const chartColors = {
+    confirmados: "#10b981",
+    pendentes: "#f59e0b",
+    cancelados: "#f43f5e",
+  };
+
+    const chartData = [
+    { pessoa: "confirmados", visitors: tickets.filter((t) => t.checked_in).length, fill: chartColors.confirmados },
+    { pessoa: "pendentes", visitors: tickets.filter((t) => !t.checked_in && !t.cancelled).length, fill: chartColors.pendentes },
+    { pessoa: "cancelados", visitors: tickets.filter((t) => t.cancelled).length, fill: chartColors.cancelados },
+  ]
+  
+  const chartConfig = {
+    confirmados: {
+      label: "Confirmados",
+      color: chartColors.confirmados,
+    },
+    pendentes: {
+      label: "Pendentes",
+      color: chartColors.pendentes,
+    },
+    cancelados: {
+      label: "Cancelados",
+      color: chartColors.cancelados,
+    },
+  }
 
   const loadTickets = useCallback(async () => {
     setTicketsLoading(true);
@@ -349,31 +384,79 @@ export default function EventDetail({ api, event, currentUser, onBack, onDeleted
       {tab === "overview" && (
         <Card className="p-5">
           { isStaffOrAdmin && (
+            <>
             <h3 className="mb-4 font-semibold text-sm uppercase tracking-wider text-muted-foreground">Métricas e Detalhes</h3>
+
+          </>
+
           ) }
           { !isStaffOrAdmin && (
             <p className="text-sm text-muted-foreground">
-              <h3 className="mb-4 font-semibold text-sm uppercase tracking-wider text-muted-foreground">Detalhes</h3>
+              <h3 className="mb-3 font-semibold text-sm uppercase tracking-wider text-muted-foreground">Detalhes</h3>
             </p>
           )}
-          <dl className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
+          <dl className="grid grid-cols-4 gap-4 text-sm sm:grid-cols-3">
             { isStaffOrAdmin && (
+              <>
+                <div>
+                  <Card className="flex flex-col">
+                    <CardContent className="flex-1">
+                      <ChartContainer
+                        config={chartConfig}
+                        className="aspect-square -h-[200px]"
+                      >
+                      <PieChart>
+                        <ChartTooltip
+                          cursor={false}
+                          content={<ChartTooltipContent hideLabel />}
+                        />
+                        <Pie
+                          data={chartData}
+                          dataKey="visitors"
+                          nameKey="pessoa"
+                          innerRadius={60}
+                        />
+                      </PieChart>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+              </div>
+              <dl className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-2">
               <div className="border-l-2 border-primary pl-3">
                 <dt className="text-xs text-muted-foreground font-medium">Inscritos Totais</dt>
-                <dd className="mt-0.5 text-xl font-bold text-foreground">{tickets.length}</dd>
+                <dd className="mt-1 text-5xl font-bold text-foreground">{tickets.length}</dd>
               </div>
-              
+              <div className="border-l-2 border-emerald-500 pl-3">
+                <dt className="text-xs text-muted-foreground font-medium">Presenças (Check-in)</dt>
+                <dd className="mt-0.5 text-5xl font-bold text-foreground">
+                  {tickets.filter((t) => t.checked_in).length}
+                </dd>
+              </div>
+              <div className="border-l-2 border-amber-500 pl-3">
+                <dt className="text-xs text-muted-foreground font-medium">Inscrições Pendentes</dt>
+                <dd className="mt-0.5 text-5xl font-bold text-foreground">
+                  {tickets.filter((t) => !t.checked_in && !t.cancelled).length}
+                </dd>
+              </div>
+              <div className="border-l-2 border-rose-500 pl-3">
+                <dt className="text-xs text-muted-foreground font-medium">Cancelados</dt>
+                <dd className="mt-0.5 text-5xl font-bold text-foreground">
+                  {tickets.filter((t) => t.cancelled).length}
+                </dd>
+              </div>
+              </dl>
+              </>
             )}
-            <div className="col-span-2 border-l-2 border-neutral-300 dark:border-neutral-700 pl-3 sm:col-span-1">
+          <div className="col-span-2 border-l-2 border-neutral-300 dark:border-neutral-700 pl-3 sm:col-span-2">
               <dt className="text-xs text-muted-foreground font-medium">ID do Evento</dt>
               <dd className="mt-1 break-all font-mono text-[11px] text-foreground font-semibold bg-muted p-1 rounded">
                 <a href={`localhost:5173/evento/${event.id}`} target="_blank" rel="noopener noreferrer">
                   localhost:5173/evento/{event.id}
                 </a>
               </dd>
-            </div>
+          </div>
           </dl>
-          <div className="mt-6 border-t border-border/60 pt-4 text-xs text-muted-foreground flex items-start gap-2">
+          <div className="mt-1 border-t border-border/60 pt-2 text-xs text-muted-foreground flex items-start gap-2">
             <Info className="h-4 w-4 shrink-0 mt-0.5 text-primary" />
             <p>
               Divulgue o UUID estruturado acima. Qualquer usuário da plataforma pode utilizá-lo na área de buscas do painel para se inscrever ou cooperar.

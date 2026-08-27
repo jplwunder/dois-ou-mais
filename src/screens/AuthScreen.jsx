@@ -35,7 +35,7 @@ export default function AuthScreen({ api, onAuthenticated }) {
       const me = await api("auth/me", { token: tokenData.access_token });
       onAuthenticated(tokenData.access_token, me);
     } catch (e) {
-      const errorMessage = e.message || "Falha ao autenticar. Verifique suas credenciais.";
+      const errorMessage = "Usuário ou senha inválidos.";
       if (errorMessage.includes("não verificada")) {
         setVerificationEmail(loginForm.email);
         setMode("verify");

@@ -53,10 +53,11 @@ export default function PublicEventSubscription({ api, onFinished, eventId }) {
 
   async function subscribeToEvent(token) {
     return api(
-      `/attendees/tickets?event_id=${encodeURIComponent(eventId)}`,
+      "/attendees/tickets",
       {
         method: "POST",
         token,
+        body: { event_id: eventId },
       }
     );
   }
@@ -122,13 +123,8 @@ export default function PublicEventSubscription({ api, onFinished, eventId }) {
         }
       }
 
-      // Faz login -> confere verificação -> inscreve -> conclui
-      let token;
+      // A inscrição acontece após a confirmação da conta.
       setStage("verify");
-      token = await doLogin();
-      await subscribeToEvent(token.access_token);
-      setStage("success");
-      onFinished(token.access_token, me);
     } catch (e) {
       setError(e.message || "Ocorreu um erro ao processar sua inscrição.");
     } finally {

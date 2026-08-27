@@ -200,7 +200,10 @@ export default function EventDetail({ api, event, currentUser, onBack, onDeleted
     setTicketActionLoading(true);
     setTicketActionError("");
     try {
-      const data = await api(`/attendees/tickets?event_id=${encodeURIComponent(event.id)}`, { method: "POST" });
+      const data = await api("/attendees/tickets", {
+        method: "POST",
+        body: { event_id: event.id },
+      });
       setMyTicket(data.ticket);
       setTickets((prev) => [...prev, data.ticket]);
     } catch (e) {

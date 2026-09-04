@@ -7,6 +7,7 @@ import { Card } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Spinner } from "../components/ui/spinner";
 import AccountVerification from "./AccountVerification";
+import ForgotPassword from "./ForgotPassword";
 
 
 // ---------------------------------------------------------------------------
@@ -35,8 +36,8 @@ export default function AuthScreen({ api, onAuthenticated }) {
       const me = await api("auth/me", { token: tokenData.access_token });
       onAuthenticated(tokenData.access_token, me);
     } catch (e) {
-      const errorMessage = "Usuário ou senha inválidos.";
-      if (errorMessage.includes("não verificada")) {
+      const errorMessage = e.message || "Usuário ou senha inválidos.";
+      if (errorMessage.includes("not verified") || errorMessage.includes("inválidos")) {
         setVerificationEmail(loginForm.email);
         setMode("verify");
       } else {
@@ -83,6 +84,20 @@ export default function AuthScreen({ api, onAuthenticated }) {
         email={verificationEmail}
         onVerified={() => {
           setNotice("Conta verificada com sucesso! Faça login para continuar.");
+          setMode("login");
+        }}
+      />
+    );
+  }
+  if (mode === "forgot") {
+    return (
+      <ForgotPassword
+        api={api}
+        onDone={() => {
+          setNotice("Se o e-mail estiver registrado, você receberá instruções para redefinir sua senha.");
+          setMode("login");
+        }}
+        onBack={() => {
           setMode("login");
         }}
       />
@@ -179,6 +194,18 @@ export default function AuthScreen({ api, onAuthenticated }) {
                 />
               </div>
             </div>
+
+            {mode === "login" && (
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  className="text-xs text-muted-foreground hover:text-foreground underline"
+                  onClick={() => { setError(""); setMode("forgot"); }}
+                >
+                  Esqueceu sua senha?
+                </button>
+              </div>
+            )}
 
             {error && <Alert tone="error">{error}</Alert>}
             {notice && <Alert tone="success">{notice}</Alert>}

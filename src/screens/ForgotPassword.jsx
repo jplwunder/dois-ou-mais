@@ -16,7 +16,7 @@ export default function ForgotPassword({ api, onDone, onBack }) {
     setLoading(true);
     setError("");
     try {
-      await api("auth/forgot-password", { method: "POST", body: { email } });
+      await api("/auth/forgot-password", { method: "POST", body: { email } });
       onDone();
     } catch (e) {
       // Still avoid confirming/denying account existence in the message

@@ -58,6 +58,10 @@ export default function AuthScreen({ api, onAuthenticated }) {
         email: registerForm.email,
         password: registerForm.password,
       };
+      if (registerForm.password.length < 8) {
+      setError("A senha deve ter pelo menos 8 caracteres.");
+      return;
+      }
       await api("/users", { method: "POST", body: payload });
       setVerificationEmail(registerForm.email);
       setLoginForm({ email: registerForm.email, password: "" });

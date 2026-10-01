@@ -9,6 +9,7 @@ import { Spinner } from "../components/ui/spinner";
 
 export default function ResetPassword({ api, token, onDone }) {
   const [newPassword, setNewPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -31,9 +32,9 @@ export default function ResetPassword({ api, token, onDone }) {
 
     setLoading(true);
     try {
-      await api("/auth/reset_password", {
-        method: "POST",
-        body: { token: token.trim(), new_password: newPassword },
+      await api('/auth/new_password', {
+        method: 'POST',
+        body: { token: token, new_password: newPassword, email: email },
       });
       onDone();
     } catch (e) {

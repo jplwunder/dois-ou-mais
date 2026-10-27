@@ -8,6 +8,7 @@ import { Input } from "../components/ui/input";
 import { Spinner } from "../components/ui/spinner";
 
 export default function ForgotPassword({ api, onDone, onBack }) {
+  const [mode, setMode] = useState("forgot");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");

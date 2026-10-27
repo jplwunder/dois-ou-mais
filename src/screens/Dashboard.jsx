@@ -136,9 +136,6 @@ export default function Dashboard({ api, events, eventsLoading, eventsError, onR
           <EmptyTitle>Nenhum evento registrado</EmptyTitle>
           <EmptyDescription>Você ainda não faz parte da organização de nenhum evento no momento.</EmptyDescription>
           </EmptyHeader>
-          <EmptyContent>
-            <Button onClick={() => setShowCreate(true)}>Crie o seu próprio evento</Button>
-          </EmptyContent>
         </Empty>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">

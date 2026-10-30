@@ -4,6 +4,12 @@ import { Modal } from "../components/ui/modal";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Label } from "../components/ui/label";
+import { 
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from "@/components/ui/input-group";
 import { CalendarFunc } from "../components/ui/calendar";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -24,7 +30,7 @@ import { extractEventId, formatDateTime } from "../lib/utils";
 
 export default function Dashboard({ api, events, eventsLoading, eventsError, onRefresh, onOpenEvent }) {
   const [showCreate, setShowCreate] = useState(false);
-  const [form, setForm] = useState({ name: "", date: "",time: "", location: "", description: "" });
+  const [form, setForm] = useState({ name: "", date: "",time: "", location: "", description: "", price: null });
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState("");
   const [joinValue, setJoinValue] = useState("");
@@ -75,6 +81,7 @@ export default function Dashboard({ api, events, eventsLoading, eventsError, onR
         date: formatCustomDateTime(selectedDate, form.time),
         location: form.location,
         description: form.description || null,
+        price: form.price ? parseFloat(form.price.replace(",", ".")) : null,
       };
       await api("/events/", { method: "POST", body: payload });
       setShowCreate(false);
@@ -231,6 +238,20 @@ export default function Dashboard({ api, events, eventsLoading, eventsError, onR
               value={form.location}
               onChange={(e) => setForm({ ...form, location: e.target.value })}
             />
+          </div>
+          <div>
+            <Label htmlFor="ev-location">Preço *</Label>
+            <InputGroup>
+              <InputGroupAddon>
+                <InputGroupText>R$</InputGroupText>
+              </InputGroupAddon>
+              <InputGroupInput
+                id="ev-price"
+                placeholder="Ex: 50,00"
+                value={form.price}
+                onChange={(e) => setForm({ ...form, price: e.target.value })}
+              />
+            </InputGroup>
           </div>
           <div>
             <Label htmlFor="ev-description">Descrição Completa</Label>

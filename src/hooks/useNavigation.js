@@ -17,10 +17,15 @@ export function useNavigation() {
     setSelectedEvent(null);
   }, []);
 
+  const toProfile = useCallback(() => {
+    setView("profile");
+    setSelectedEvent(null);
+  }, []);
+
   const reset = useCallback(() => {
     setView("dashboard");
     setSelectedEvent(null);
   }, []);
 
-  return { view, selectedEvent, openEvent, backToDashboard, reset };
+  return { view, selectedEvent, openEvent, backToDashboard, reset, toProfile };
 }

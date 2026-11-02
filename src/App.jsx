@@ -15,7 +15,7 @@ import { useEvents } from "./hooks/useEvents";
 import { Header } from "./components/Header";
 import AuthScreen from "./screens/AuthScreen";
 import Dashboard from "./screens/Dashboard";
-import EventDetail from "./screens/EventDetail";
+import EventDetail from "./screens/public/EventDetail";
 import PublicEventSubscription from "./screens/PublicEventSubscription";
 import PersonalSettings from "./screens/PersonalSettings";
 
@@ -42,7 +42,10 @@ export default function App() {
   const [passwordResetDone, setPasswordResetDone] = useState(false);
 
   // Navigation state
-  const { view, selectedEvent, openEvent, backToDashboard, toProfile, reset } = useNavigation();
+  const { view, backToDashboard, toProfile, reset } = useNavigation();
+
+  // Na rota pública /evento/:id: false = página do evento, true = formulário de inscrição
+  const [subscribing, setSubscribing] = useState(false);
 
   const handleUnauthorized = useCallback(() => {
     logout();
@@ -60,6 +63,7 @@ export default function App() {
 
   function handleAuthenticated(newToken, user) {
     login(newToken, user);
+    setSubscribing(false);
     if (window.location.pathname !== "/") {
       window.history.pushState({}, "", "/");
     }
@@ -71,8 +75,14 @@ export default function App() {
     clearEvents();
   }
 
+  // A página de evento é pública: abrir um evento = navegar para /evento/:id
   function handleOpenEvent(event) {
-    openEvent(event);
+    window.location.assign(`/evento/${event.id}`);
+  }
+
+  function handleSubscribe() {
+    window.scrollTo(0, 0);
+    setSubscribing(true);
   }
 
   function handleBackToDashboard() {
@@ -111,8 +121,18 @@ export default function App() {
               Sua senha foi redefinida com sucesso!
             </Alert>
           )}
-          {publicEventId && (!token || !currentUser) ? (
-            <PublicEventSubscription api={api} onFinished={handleAuthenticated} eventId={publicEventId} />
+          {publicEventId ? (
+            subscribing ? (
+              <PublicEventSubscription
+                api={api}
+                onFinished={handleAuthenticated}
+                eventId={publicEventId}
+                initialStage="form"
+                onBack={() => setSubscribing(false)}
+              />
+            ) : (
+              <EventDetail api={api} eventId={publicEventId} onSubscribe={handleSubscribe} />
+            )
           ) : !token || !currentUser ? (
             <AuthScreen api={api} onAuthenticated={handleAuthenticated} />
           ) : (
@@ -128,15 +148,6 @@ export default function App() {
                   eventsError={eventsError}
                   onRefresh={refreshEvents}
                   onOpenEvent={handleOpenEvent}
-                />
-              )}
-              {view === "event" && selectedEvent && (
-                <EventDetail
-                  api={api}
-                  event={selectedEvent}
-                  currentUser={currentUser}
-                  onBack={handleBackToDashboard}
-                  onDeleted={handleBackToDashboard}
                 />
               )}
               {view === "profile" && (

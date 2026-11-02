@@ -30,8 +30,14 @@ function parseDate(value) {
 // Sub-telas: Inscrição Pública de Evento (Acessível sem Login)
 // Estágios: landing -> form -> verify -> success
 // ---------------------------------------------------------------------------
-export default function PublicEventSubscription({ api, onFinished, eventId }) {
-  const [stage, setStage] = useState("landing");
+export default function PublicEventSubscription({
+  api,
+  onFinished,
+  eventId,
+  initialStage = "landing",
+  onBack,
+}) {
+  const [stage, setStage] = useState(initialStage);
 
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -349,7 +355,8 @@ export default function PublicEventSubscription({ api, onFinished, eventId }) {
           type="button"
           onClick={() => {
             setError("");
-            setStage("landing");
+            if (onBack) onBack();
+            else setStage("landing");
           }}
           className="mb-4 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
         >

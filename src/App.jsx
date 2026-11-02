@@ -17,6 +17,7 @@ import AuthScreen from "./screens/AuthScreen";
 import Dashboard from "./screens/Dashboard";
 import EventDetail from "./screens/EventDetail";
 import PublicEventSubscription from "./screens/PublicEventSubscription";
+import PersonalSettings from "./screens/PersonalSettings";
 
 import axiosInstance from "./lib/api";
 import apiRequest from "./lib/apiRequest"
@@ -41,7 +42,7 @@ export default function App() {
   const [passwordResetDone, setPasswordResetDone] = useState(false);
 
   // Navigation state
-  const { view, selectedEvent, openEvent, backToDashboard, reset } = useNavigation();
+  const { view, selectedEvent, openEvent, backToDashboard, toProfile, reset } = useNavigation();
 
   const handleUnauthorized = useCallback(() => {
     logout();
@@ -79,6 +80,10 @@ export default function App() {
     refreshEvents();
   }
 
+  function handleToProfile() {
+    toProfile();
+  }
+
   function handlePasswordResetDone() {
     setPasswordResetDone(true);
     window.history.pushState({}, "", "/");
@@ -112,7 +117,7 @@ export default function App() {
             <AuthScreen api={api} onAuthenticated={handleAuthenticated} />
           ) : (
           <>
-            <Header user={currentUser} onLogout={handleLogout} onLogoClick={handleBackToDashboard} />
+            <Header user={currentUser} onLogout={handleLogout} onLogoClick={handleBackToDashboard} onProfileClick={handleToProfile} />
 
             <main className="animate-in fade-in duration-300">
               {view === "dashboard" && (
@@ -132,6 +137,13 @@ export default function App() {
                   currentUser={currentUser}
                   onBack={handleBackToDashboard}
                   onDeleted={handleBackToDashboard}
+                />
+              )}
+              {view === "profile" && (
+                <PersonalSettings
+                  api={api}
+                  currentUser={currentUser}
+                  onBack={handleBackToDashboard}
                 />
               )}
             </main>

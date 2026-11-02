@@ -5,15 +5,33 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Spinner } from "../components/ui/spinner";
 import { Alert } from "../components/ui/alert";
-import { CalendarPlus, Calendar, MapPin, UserIcon, Mail, Lock, CheckCircle2, Loader2 } from "lucide-react";
+import {
+  CalendarPlus,
+  Calendar,
+  Clock,
+  MapPin,
+  UserIcon,
+  Mail,
+  Lock,
+  CheckCircle2,
+  Loader2,
+  ArrowLeft,
+  BadgeDollarSign,
+} from "lucide-react";
 import { formatDateTime } from "../lib/utils";
 import AccountVerification from "./AccountVerification";
 
+function parseDate(value) {
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
 // ---------------------------------------------------------------------------
 // Sub-telas: Inscrição Pública de Evento (Acessível sem Login)
+// Estágios: landing -> form -> verify -> success
 // ---------------------------------------------------------------------------
 export default function PublicEventSubscription({ api, onFinished, eventId }) {
-  const [stage, setStage] = useState("form");
+  const [stage, setStage] = useState("landing");
 
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -158,6 +176,141 @@ export default function PublicEventSubscription({ api, onFinished, eventId }) {
     );
   }
 
+  if (stage === "landing") {
+    if (!event) {
+      return (
+        <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
+          <div className="w-full max-w-md">
+            <Alert variant="destructive" className="text-sm">
+              {error || "Evento não encontrado. Verifique o link que você recebeu."}
+            </Alert>
+          </div>
+        </div>
+      );
+    }
+
+    const date = parseDate(event.date);
+    const day = date ? date.toLocaleDateString("pt-BR", { day: "2-digit" }) : "--";
+    const month = date
+      ? date.toLocaleDateString("pt-BR", { month: "short" }).replace(".", "")
+      : "";
+    const weekday = date ? date.toLocaleDateString("pt-BR", { weekday: "long" }) : "";
+    const fullDate = date
+      ? date.toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })
+      : "Data a confirmar";
+    const time = date
+      ? date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+      : null;
+
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
+        <div className="w-full max-w-2xl">
+          <Card className="overflow-hidden bg-card shadow-md">
+            {/* Cabeçalho: data em destaque + nome do evento */}
+            <div className="flex flex-col gap-6 bg-primary/5 p-6 sm:flex-row sm:items-center sm:p-10">
+              <div
+                className="flex h-28 w-28 shrink-0 flex-col items-center justify-center bg-primary text-primary-foreground"
+                aria-hidden="true"
+              >
+                <span className="text-4xl font-bold leading-none">{day}</span>
+                <span className="mt-1 text-sm font-medium capitalize">{month}</span>
+              </div>
+
+              <div className="min-w-0">
+                <p className="mb-1 text-sm font-medium text-muted-foreground">
+                  Você foi convidado para
+                </p>
+                <h1 className="break-words text-3xl font-bold leading-tight text-foreground sm:text-4xl">
+                  {event.name}
+                </h1>
+              </div>
+            </div>
+
+            {/* Informações principais */}
+            <div className="grid gap-4 p-6 sm:grid-cols-2 sm:p-10 sm:pb-6">
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-muted">
+                  <Calendar className="h-5 w-5 text-foreground" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Data</p>
+                  <p className="font-semibold text-foreground">{fullDate}</p>
+                  {weekday && (
+                    <p className="text-sm capitalize text-muted-foreground">{weekday}</p>
+                  )}
+                </div>
+              </div>
+
+              {time && (
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-muted">
+                    <Clock className="h-5 w-5 text-foreground" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Horário</p>
+                    <p className="font-semibold text-foreground">{time}</p>
+                  </div>
+                </div>
+              )}
+
+              {event.location && (
+                <div className="flex items-start gap-3 sm:col-span-1">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-muted">
+                    <MapPin className="h-5 w-5 text-foreground" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Local</p>
+                    <p className="font-semibold text-foreground">{event.location}</p>
+                  </div>
+                </div>
+              )}
+
+              {event.price && (
+                <div className="flex items-start gap-3 sm:col-span-1">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-muted">
+                    <BadgeDollarSign className="h-5 w-5 text-foreground"/>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Preço</p>
+                    <p className="font-semibold text-foreground">{event.price}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Descrição */}
+            {event.description && (
+              <div className="px-6 pb-6 sm:px-10">
+                <h2 className="mb-2 text-sm font-semibold text-foreground">Sobre o evento</h2>
+                <p className="max-w-prose whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+                  {event.description}
+                </p>
+              </div>
+            )}
+
+            {/* Chamada para ação */}
+            <div className="border-t border-border/60 bg-muted/30 p-6 sm:px-10">
+              <Button
+                size="lg"
+                className="w-full gap-2 text-base"
+                onClick={() => {
+                  setError("");
+                  setStage("form");
+                }}
+              >
+                <CalendarPlus className="h-5 w-5" />
+                Quero me Inscrever
+              </Button>
+              <p className="mt-3 text-center text-xs text-muted-foreground">
+                Inscrição gratuita. Leva menos de um minuto.
+              </p>
+            </div>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   if (stage === "verify") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
@@ -186,12 +339,26 @@ export default function PublicEventSubscription({ api, onFinished, eventId }) {
     );
   }
 
+  // -------------------------------------------------------------------------
+  // Estágio 2: formulário de inscrição
+  // -------------------------------------------------------------------------
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
       <div className="w-full max-w-md">
+        <button
+          type="button"
+          onClick={() => {
+            setError("");
+            setStage("landing");
+          }}
+          className="mb-4 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="h-4 w-4" /> Voltar para o evento
+        </button>
+
         <div className="mb-6 text-center">
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center bg-primary rounded-2xl">
-            <CalendarPlus className="h-6 w-6" />
+            <CalendarPlus className="h-6 w-6 text-primary-foreground" />
           </div>
           <span className="text-xs font-bold uppercase tracking-wider">Inscrição de Evento</span>
         </div>
@@ -204,11 +371,6 @@ export default function PublicEventSubscription({ api, onFinished, eventId }) {
                 <p className="flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5" /> {formatDateTime(event.date)}</p>
                 <p className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> {event.location}</p>
               </div>
-              {event.description && (
-                <Card className="mt-2 bg-muted/40 p-2.5">
-                  {event.description}
-                </Card>
-              )}
             </div>
           )}
 

@@ -11,9 +11,10 @@ import { initials } from "../lib/utils";
 // Componente de Layout Superior: Header
 // ---------------------------------------------------------------------------
 
-export function Header({ user, onLogout, onLogoClick }) {
+export function Header({ user, onLogout, onLogoClick, setActiveTab, onProfileClick }) {
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
@@ -21,10 +22,10 @@ export function Header({ user, onLogout, onLogoClick }) {
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs transition-transform group-hover:scale-105">
             <CalendarPlus className="h-4 w-4" />
           </div>
-          <span className="font-bold text-foreground tracking-tight text-sm sm:text-base">EventosHub</span>
+          <span className="font-bold text-foreground tracking-tight text-sm sm:text-base">Dois ou Mais</span>
         </Button>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <Button
             onClick={() => setTheme(isDark ? "light" : "dark")}
             variant="ghost"
@@ -32,12 +33,21 @@ export function Header({ user, onLogout, onLogoClick }) {
           >
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
-
-            <Avatar>
+          
+          {/* Container clicável que agrupa o Avatar e o Nome */}
+          <div 
+            onClick={() => onProfileClick()}
+            className="flex items-center gap-2.5 cursor-pointer group py-1 px-2 rounded-lg hover:bg-accent/50 transition-colors"
+            title="Ir para informações pessoais"
+          >
+            <Avatar className="h-9 w-9 border border-border">
               <AvatarImage src={user.avatarUrl} alt={initials(user.name)} />
               <AvatarFallback>{initials(user.name)}</AvatarFallback>
             </Avatar>
-            <Label>{user.name}</Label>
+            <Label className="cursor-pointer transition-colors font-medium">
+              {user.name}
+            </Label>
+          </div>
 
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-9 w-9" onClick={onLogout} aria-label="Desconectar">
             <LogOut className="h-4 w-4" />
@@ -47,4 +57,3 @@ export function Header({ user, onLogout, onLogoClick }) {
     </header>
   );
 }
-

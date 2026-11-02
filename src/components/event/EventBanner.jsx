@@ -1,4 +1,4 @@
-import { CalendarDays, MapPin } from "lucide-react"
+import { Clock, Info, MapPin, Ticket, Undo2, Users } from "lucide-react"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -37,7 +37,8 @@ export default function EventBanner({ event, onSubscribe }) {
         </CardHeader>
         <Separator />
         <CardContent className="flex flex-col gap-4">
-          <div id="sobre" className="flex scroll-mt-20 text-xl">
+          <div id="sobre" className="flex scroll-mt-20 items-center gap-2 text-xl">
+            <Info className="size-5 shrink-0 text-muted-foreground" />
             Sobre
           </div>
           <div className="text-justify hyphens-auto text-muted-foreground">
@@ -46,19 +47,22 @@ export default function EventBanner({ event, onSubscribe }) {
             Entre elas, seu caminhar com Deus, suas atitudes como marido e como pai.
             Não somos ligados a nenhuma denominação específica, somos cristãos de várias igrejas e localidades diferentes.
           </div>
-          <div id="local" className="flex scroll-mt-20 text-xl">
+          <div id="local" className="flex scroll-mt-20 items-center gap-2 text-xl">
+            <MapPin className="size-5 shrink-0 text-muted-foreground" />
             Local
           </div>
           <div className="text-justify hyphens-auto text-muted-foreground">
             Parque Comendador Antônio Carbonari - Parque da Uva - Jundiaí/SP
           </div>
-          <div id="horario" className="flex scroll-mt-20 text-xl">
+          <div id="horario" className="flex scroll-mt-20 items-center gap-2 text-xl">
+            <Clock className="size-5 shrink-0 text-muted-foreground" />
             Horário
           </div>
           <div className="text-justify hyphens-auto text-muted-foreground">
             8h00 - 18h00
           </div>
-          <div id="ingressos" className="flex scroll-mt-20 text-xl">
+          <div id="ingressos" className="flex scroll-mt-20 items-center gap-2 text-xl">
+            <Ticket className="size-5 shrink-0 text-muted-foreground" />
             Ingressos
           </div>
           <div className="text-justify hyphens-auto text-muted-foreground">
@@ -70,13 +74,15 @@ export default function EventBanner({ event, onSubscribe }) {
             Incluso Café, Almoço e Estacionamento <br />
             Idade Permitida: a partir de 12 anos
           </div>
-          <div className="flex text-xl">
+          <div className="flex items-center gap-2 text-xl">
+            <Users className="size-5 shrink-0 text-muted-foreground" />
             Vagas Limitadas
           </div>
           <div className="text-justify hyphens-auto text-muted-foreground">
             Não teremos inscrição no local.
           </div>
-          <div id="reembolso" className="flex scroll-mt-20 text-xl">
+          <div id="reembolso" className="flex scroll-mt-20 items-center gap-2 text-xl">
+            <Undo2 className="size-5 shrink-0 text-muted-foreground" />
             Política de Cancelamento/Reembolso
           </div>
           <div className="text-justify hyphens-auto text-muted-foreground">

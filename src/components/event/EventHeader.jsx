@@ -34,15 +34,23 @@ export default function EventHeader({ event, onSubscribe }) {
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
       <div className="mx-auto flex h-14 w-full max-w-5xl items-center gap-2 px-4">
-        <Avatar size="lg" className="shrink-0">
-          <AvatarImage
-            src={
-              "https://s3.wasabisys.com/files.e-inscricao.tech/uploads/organization/logo/28143/thumb_Logo_HCH_512x512_1.png"
-            }
-            alt="Logo"
-          />
-          <AvatarFallback>{initials("Homens com Honra")}</AvatarFallback>
-        </Avatar>
+        <a
+          href="https://homenscomhonra.com.br/brasil/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Site do Homens com Honra"
+          className="shrink-0 rounded-full focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+        >
+          <Avatar size="lg">
+            <AvatarImage
+              src={
+                "https://s3.wasabisys.com/files.e-inscricao.tech/uploads/organization/logo/28143/thumb_Logo_HCH_512x512_1.png"
+              }
+              alt="Logo do Homens com Honra"
+            />
+            <AvatarFallback>{initials("Homens com Honra")}</AvatarFallback>
+          </Avatar>
+        </a>
 
         {/* <span className="text-sm md:text-sm">
           Homens com Honra
